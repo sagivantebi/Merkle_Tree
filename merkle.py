@@ -67,24 +67,39 @@ def print2D(root):
     print_tree(root, 0)
 
 
-def findNodeById(root, listLeafs, idNode):
+def findNodeByIdInt(root, listLeafs, idNode):
     if root is None:
         return None
     if root.value == listLeafs[idNode]:
         return root
-    toReturn = findNodeById(root.left, listLeafs, idNode)
+    toReturn = findNodeByIdInt(root.left, listLeafs, idNode)
     if toReturn != None:
         return toReturn
-    toReturn = findNodeById(root.right, listLeafs, idNode)
+    toReturn = findNodeByIdInt(root.right, listLeafs, idNode)
     if toReturn != None:
         return toReturn
     return None
 
-def recursive_get_proof(root, nodeMerkle):
+
+def findNodeByIdStr(root, listLeafs, idNode):
+    if root is None:
+        return None
+    if root.value == idNode:
+        return root
+    toReturn = findNodeByIdStr(root.left, listLeafs, idNode)
+    if toReturn != None:
+        return toReturn
+    toReturn = findNodeByIdStr(root.right, listLeafs, idNode)
+    if toReturn != None:
+        return toReturn
+    return None
+
+
+def recursive_get_proof(root, nodeMerkle, str):
     if root.value == nodeMerkle.value:
-        return
-    print(nodeMerkle.neighbor.hashValue)
-    recursive_get_proof(root, nodeMerkle.parent)
+        return str
+    str = str + " " + nodeMerkle.neighbor.hashValue
+    return recursive_get_proof(root, nodeMerkle.parent, str)
 
 
 def menu():
@@ -93,7 +108,7 @@ def menu():
     firstChar = choice[0]
     root = 0
     listLeafs = []
-    while choice != 0:
+    while(1):
         if firstChar == '1':
             listLeafs.append(choice[2:])
             root = build_tree(listLeafs)
@@ -104,11 +119,18 @@ def menu():
             else:
                 print()
         elif firstChar == '3':
-            print(root.hashValue)
-            nodeMerkle = findNodeById(root, listLeafs, int(choice[2:]))
-            recursive_get_proof(root, nodeMerkle)
+            str = root.hashValue
+            nodeMerkle = findNodeByIdInt(root, listLeafs, int(choice[2:]))
+            toPrint = recursive_get_proof(root, nodeMerkle, str)
+            print(toPrint)
         elif firstChar == '4':
-            continue
+            splitBySpaces = choice.split(" ", 2)
+            value = splitBySpaces[1]
+            inputCompare = splitBySpaces[2]
+            nodeMerkle = findNodeByIdStr(root, listLeafs, value)
+            str = root.hashValue
+            toCompare = recursive_get_proof(root, nodeMerkle, str)
+            print(inputCompare == toCompare)
         elif firstChar == '5':
             continue
         elif firstChar == '6':
