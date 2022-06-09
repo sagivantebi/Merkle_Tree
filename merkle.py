@@ -2,9 +2,27 @@
 # !/usr/bin/python3
 import hashlib
 
+from cryptography.hazmat.primitives import serialization
+
 COUNT = [10]
 ID_NUM = 0
 
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.backends import default_backend
+
+private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048, backend=default_backend())
+public_key = private_key.public_key()
+
+pem_puclic = public_key.public_bytes(encoding=serialization.Encoding.PEM,
+                                     format=serialization.PublicFormat.SubjectPublicKeyInfo)
+pem_private = private_key.private_bytes(encoding=serialization.Encoding.PEM,
+                                        format=serialization.PrivateFormat.TraditionalOpenSSL,
+                                        encryption_algorithm=serialization.NoEncryption())
+print(pem_private.decode())
+print(pem_puclic.decode())
+
+
+# print(pem.encode())
 
 class MerkleTreeNode:
     def __init__(self, value):
@@ -39,6 +57,9 @@ def build_tree(leaves):
             node2.parent = parent
             node1.neighbor = node2
             node2.neighbor = node1
+            # add 0 to left son and 1 to right son
+            node1.hashValue = '0' + node1.hashValue
+            node2.hashValue = '1' + node2.hashValue
             temp.append(parent)
         nodes = temp
     return nodes[0]
@@ -108,7 +129,7 @@ def menu():
     firstChar = choice[0]
     root = 0
     listLeafs = []
-    while(1):
+    while (1):
         if firstChar == '1':
             listLeafs.append(choice[2:])
             root = build_tree(listLeafs)
