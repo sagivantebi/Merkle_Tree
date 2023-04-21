@@ -1,4 +1,4 @@
-# Sagiv Antebi, 318159282, Dvir Amram, 318192200
+# Sagiv Antebi
 # !/usr/bin/python3
 import binascii
 import hashlib
